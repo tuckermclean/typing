@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+    
+    <head>
+	<title>Magellan's Typing Game!</title>
+	<meta name="viewport" content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no, user-scalable=0" />
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="sounddata.js"></script>
+	<script src="sounds.js"></script>
+	<script src="typing.js"></script>
+	
+	<style type="text/css">
+
+	 body {
+	     background-color: yellow;
+	     color: black;
+	     font-size: 13em;
+	     font-size: 13vw;
+	     margin: 0;
+	     padding: 0;
+	     font-family: Noto Sans, Verdana, sans-serif;
+	     font-weight: bold;
+	 }
+
+	 #frame {
+	     height: 100vh;
+	     width: 100%;
+	 }
+
+	 #display {
+	     position: relative;
+	     top: 50%;
+	     transform: translateY(-50%);
+	     text-align: center;
+	 }
+
+	 input#keyboardhack {
+	     position: absolute;
+	     top: 0px;
+	     left: 0px;
+	     opacity: 0;
+	 }
+	 
+	</style>
+    </head>
+    
+    <body>
+      
+      <div id="frame">
+	<input type="text" id="keyboardhack" />
+	<div id="display">Press a key</div>
+      </div>
+      
+    </body>  
+    
+</html>
