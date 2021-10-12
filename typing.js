@@ -95,7 +95,11 @@ var gameModes = {
             };
 
             this.updateView = function() {
-	              $('div#display').html(this.displayKey);
+                if (this.displayKey.length === 1 && this.displayKey !== this.displayKey.toLowerCase()) {
+                    $('div#display').html(this.displayKey + ' ' + this.displayKey.toLowerCase());
+                } else {
+	                  $('div#display').html(this.displayKey);
+                }
 	              sounds.play(this.speechKey);
             };
         };
@@ -144,7 +148,7 @@ var gameModes = {
                     initConfetti();
                     render();
                 } else {
-	                  $('div#display').html(this.lookingFor);
+	                  $('div#display').html(this.lookingFor + ' ' + this.lookingFor.toLowerCase());
 	                  sounds.play(this.lookingFor);
                 }
             };
