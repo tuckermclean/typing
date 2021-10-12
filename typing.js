@@ -66,14 +66,13 @@ $(document).ready( function() {
 	      if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
 	          rfs.call(window.document.documentElement);
 	      }
+
+        $("#keyboardhack")[0].focus()
     };
 
     requestFullScreen();
 
-    $('body').click(function(event) {
-	      $("#keyboardhack").trigger('focus');
-	      requestFullScreen();
-    });
+    $('body').click(requestFullScreen);
 
     var sounds = new Sounds();
 
