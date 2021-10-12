@@ -57,7 +57,95 @@ var speechKeys = {
     "~": "Tilde",
 };
 
+function GameMode() {
+    this.speechKey = '';
+    this.displayKey = '';
+
+    this.init = function() {
+        console.log('Default GameMode.init() function');
+    };
+
+    this.updateKey = function(newDisplayKey, newSpeechKey) {
+        this.displayKey = newDisplayKey;
+        this.speechKey = newSpeechKey;
+        console.log('Update: displayKey = ' + this.displayKey + ', speechKey = ' + this.speechKey);
+        this.updateView();
+    };
+
+    this.updateView = function() {
+        console.log('Updating view');
+    };
+
+}
+
+var gameModes = {
+    monkey: function() {
+
+        var MonkeyMode = function() {
+            GameMode.call(this);
+
+            this.init = function() {
+                $('div#display').html('Press a key');
+            };
+
+            this.updateKey = function(newDisplayKey, newSpeechKey) {
+                this.speechKey = newSpeechKey;
+                this.displayKey = newDisplayKey;
+                this.updateView();
+            };
+
+            this.updateView = function() {
+	              $('div#display').html(this.displayKey);
+	              sounds.play(this.speechKey);
+            };
+        };
+
+        MonkeyMode.prototype = Object.create(GameMode.prototype);
+        return new MonkeyMode();
+
+    },
+
+    abc: function() {
+
+        var ABCMode = function() {
+            GameMode.call(this);
+
+            this.lookingFor = '';
+            this.letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+            this.init = function() {
+                var that = this;
+                $('div#display').html('Press a key');
+                $('body').one('click', function() { that.updateKey(); });
+            };
+
+            this.updateKey = function(newDisplayKey, newSpeechKey) {
+                if (this.lookingFor === '') {
+                    this.lookingFor = 'A';
+                    this.updateView();
+                } else if (this.letters.indexOf(newDisplayKey) === this.letters.indexOf(this.lookingFor)) {
+                    this.lookingFor = this.letters.charAt(this.letters.indexOf(this.lookingFor) + 1);
+                    this.updateView();
+                }
+            };
+
+            this.updateView = function() {
+	              $('div#display').html(this.lookingFor);
+	              sounds.play(this.lookingFor);
+            };
+        };
+
+        ABCMode.prototype = Object.create(GameMode.prototype);
+        return new ABCMode();
+    }
+};
+
+var sounds = new Sounds();
+var gameMode = new GameMode();
+
+
 $(document).ready( function() {
+
     var requestFullScreen = function() {
 	      var doc = window.document;
 	      var docEl = doc.documentElement;
@@ -67,14 +155,32 @@ $(document).ready( function() {
 	          rfs.call(window.document.documentElement);
 	      }
 
-        $("#keyboardhack")[0].focus()
+        $("#keyboardhack")[0].focus();
     };
 
-    requestFullScreen();
+    var toggleMode = function() {
+
+        switch($('#mode button').val()) {
+        case 'wait':
+        case 'abc':
+            gameMode = gameModes.abc();
+            $('#mode button').val('monkey');
+            $('#mode button').text('Monkey mode');
+            break;
+        case 'monkey':
+            gameMode = gameModes.monkey();
+            $('#mode button').val('abc');
+            $('#mode button').text('ABC mode');
+            break;
+        }
+
+        gameMode.init();
+    };
+
+    toggleMode();
 
     $('body').click(requestFullScreen);
-
-    var sounds = new Sounds();
+    $('#mode button').click(toggleMode);
 
     $(document).keyup(function(event) {
 	      event = event || window.event;
@@ -98,10 +204,7 @@ $(document).ready( function() {
 
 	      var speechKey = speechKeys[eventKey] || displayKey;
 
-	      //	$('div#display').html(displayKey.charCodeAt(0) + ": " + displayKey);
-	      $('div#display').html(displayKey);
-
-	      sounds.play(speechKey);
+        gameMode.updateKey(displayKey, speechKey);
 
 	      return false;
     });

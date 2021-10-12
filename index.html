@@ -2,7 +2,7 @@
 <html lang="en">
 
     <head>
-	      <title>Magellan's Typing Game!</title>
+	      <title>Aurora's Typing Game!</title>
 	      <meta name="viewport" content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no, user-scalable=0" />
 	      <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	      <script src="sounddata.js"></script>
@@ -39,16 +39,29 @@
 	           top: 0px;
 	           left: 0px;
 	           opacity: 0;
+             z-index: -100;
 	       }
+
+         #mode {
+             font-size: 2rem;
+         }
+
+         #mode button {
+             font-size: 2rem;
+         }
 
 	      </style>
     </head>
 
     <body>
 
+        <div id="mode">
+            <button value="wait">Wait...</button>
+        </div>
+
         <div id="frame">
 	          <input type="text" id="keyboardhack" />
-	          <div id="display">Press a key</div>
+	          <div id="display">Initializing...</div>
         </div>
 
     </body>
