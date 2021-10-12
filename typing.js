@@ -119,7 +119,7 @@ var gameModes = {
 
             this.init = function() {
                 var that = this;
-                $('div#display').html('Press a key');
+                $('div#display').html('Click and type!');
                 $('body').one('click', function() { that.updateKey(); });
             };
 
