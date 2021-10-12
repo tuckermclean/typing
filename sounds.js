@@ -1,5 +1,5 @@
 var Sounds = function() {
-    var soundData = new SoundData();
+//    var soundData = new SoundData();
     var that = this;
 
     this.audioContext = new AudioContext();
