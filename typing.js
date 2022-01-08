@@ -79,6 +79,62 @@ function GameMode() {
 }
 
 var gameModes = {
+    flash: function() {
+
+        var FlashMode = function() {
+            GameMode.call(this);
+
+            this.lookingFor = '';
+            this.letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+            this.init = function() {
+                var that = this;
+                $('div#display').html('Click to begin');
+                $('body').one('click', function() { that.updateKey(); });
+            };
+
+            this.randomLetter = function() {
+                return this.letters[Math.floor(Math.random()*26)];
+            };
+
+            this.updateKey = function(newDisplayKey, newSpeechKey) {
+                var that = this;
+                if (this.lookingFor === '') {
+                    this.lookingFor = this.randomLetter();
+                    this.updateView();
+                } else if (this.letters.indexOf(newDisplayKey) === this.letters.indexOf(this.lookingFor)) {
+                    sounds.play(this.lookingFor);
+                    this.lookingFor = this.randomLetter();
+                    setTimeout(function() {
+                        sounds.play('Tada');
+                        that.updateView();
+                    }, 1000);
+
+                    $('body').addClass('rightAnswer');
+                    setTimeout(function() { $('body').removeClass('rightAnswer'); }, 600);
+                } else {
+                    sounds.play('Ding');
+                    $('body').addClass('wrongAnswer');
+                    setTimeout(function() { $('body').removeClass('wrongAnswer'); }, 600);
+                }
+            };
+
+            this.updateView = function() {
+                if (this.lookingFor === '') {
+                    $('div#display').html('You win!');
+                    sounds.play('Yay');
+                    initConfetti();
+                    render();
+                } else {
+	                  $('div#display').html(this.lookingFor + ' ' + this.lookingFor.toLowerCase());
+                }
+            };
+        };
+
+        FlashMode.prototype = Object.create(GameMode.prototype);
+        return new FlashMode();
+    },
+
     monkey: function() {
 
         var MonkeyMode = function() {
@@ -165,24 +221,17 @@ var gameMode = new GameMode();
 
 $(document).ready( function() {
 
-    var requestFullScreen = function() {
-	      var doc = window.document;
-	      var docEl = doc.documentElement;
-	      var rfs = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-
-	      if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-	          rfs.call(window.document.documentElement);
-	      }
-
-        $("#keyboardhack")[0].focus();
-    };
-
     var toggleMode = function() {
 
         switch($('#mode button').val()) {
         case 'wait':
         case 'abc':
             gameMode = gameModes.abc();
+            $('#mode button').val('flash');
+            $('#mode button').text('Flash card mode');
+            break;
+        case 'flash':
+            gameMode = gameModes.flash();
             $('#mode button').val('monkey');
             $('#mode button').text('Monkey mode');
             break;
@@ -198,14 +247,11 @@ $(document).ready( function() {
 
     toggleMode();
 
-    $('body').click(requestFullScreen);
     $('#mode button').click(toggleMode);
 
     $(document).keyup(function(event) {
 	      event = event || window.event;
 	      var eventKey = event.key;
-
-	      requestFullScreen();
 
 	      if (eventKey === "Unidentified") {
 	          var keyboardHackText = $("#keyboardhack").val();
